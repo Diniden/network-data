@@ -50,7 +50,7 @@ export function addEdge<TNodeMeta, TEdgeMeta>(
     network.edgeMap.set(edge.id, edge);
     // Add the node lookup for the edge
     addToMapOfMaps(network.atobMap, edge.a, edge.b, edge);
-    // Ensure the edge exists on the node
+    // Ensure the edge exists on the nodes it's associated with
     let edgeIndex = edge.a.out.indexOf(edge);
     if (edgeIndex < 0) edge.a.out.push(edge);
     edgeIndex = edge.b.in.indexOf(edge);

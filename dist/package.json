@@ -1,11 +1,11 @@
 {
   "author": {
-    "name": "Vega Studio",
-    "email": "chris@vega.com",
-    "url": "http://vega.studio"
+    "name": "Diniden",
+    "email": "diniden@outlook.com",
+    "url": "http://diniden.com"
   },
-  "name": "deltav",
-  "version": "1.32.0",
+  "name": "network-data",
+  "version": "1.0.0",
   "main": "index.js",
   "types": "src/index.d.ts",
   "license": "MIT",

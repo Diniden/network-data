@@ -19,14 +19,16 @@ export interface IRemoveNodeResult<TNodeMeta, TEdgeMeta> {
  */
 export function removeNode<TNodeMeta, TEdgeMeta>(
   network: INetworkData<TNodeMeta, TEdgeMeta>,
-  nodes: INode<TNodeMeta, TEdgeMeta> | INode<TNodeMeta, TEdgeMeta>[]
+  nodes: INode<TNodeMeta, TEdgeMeta> | INode<TNodeMeta, TEdgeMeta>[],
+  removedNodes?: Set<INode<TNodeMeta, TEdgeMeta>>,
+  removedEdges?: Set<IEdge<TNodeMeta, TEdgeMeta>>
 ) {
   // Ensure this is a list
   nodes = makeList(nodes);
   // Track all edges removed so we don't perform extra removals unnecessarily
-  const removedEdges = new Set<IEdge<TNodeMeta, TEdgeMeta>>();
+  removedEdges = removedEdges || new Set();
   // Track all nodes successfully removed
-  const removedNodes = new Set<INode<TNodeMeta, TEdgeMeta>>();
+  removedNodes = removedNodes || new Set();
   // Track all nodes that could not be removed during the operation
   const errors = new Set<INode<TNodeMeta, TEdgeMeta>>();
 

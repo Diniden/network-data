@@ -1,4 +1,4 @@
-import { INode, IEdge } from "../types";
+import { IEdge, INode } from "../types";
 import { makeList } from "../util/make-list";
 import { neighbors } from "./neighbors";
 
@@ -96,6 +96,11 @@ export interface ISpreadOptions<TNodeMeta, TEdgeMeta> {
      */
     waitsForLayers?: boolean;
   };
+  /**
+   * When specified, this limits how deep into the network the spread will go from the input start nodes. Depth is an
+   * integer where depth 0 is the start node and each subsequent neighbor node is 1 depth farther.
+   */
+  maxDepth?: number;
   /** When specified, this limits how many nodes can be aggregated at once while spreading out. */
   maxNodesPerExecution?: number;
   /**
@@ -170,8 +175,8 @@ export function spread<TNodeMeta, TEdgeMeta>({
   // Make our initial processing queue containing all of our initial nodes from which we'll spread.
   let firstExec = true;
   let toProcess = makeList(startNodes).reverse();
-  let edges: IEdge<TNodeMeta, TEdgeMeta>[] = [];
-  let path = new Map();
+  const edges: IEdge<TNodeMeta, TEdgeMeta>[] = [];
+  const path = new Map();
 
   // Handles initial exec operations which includes things like first broadcast to include the starter nodes as the first
   // execution layer.
