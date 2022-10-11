@@ -19,18 +19,16 @@ npm*log-*
 scripts
 # Remove any development Code
 src
-docs
+lib
+app
 loaders
-# Ensure distribution sources are included
-!dist/src
-!dist/docs
 # Remove any tests
 test
 unit-test
 # Clear out any uneeded config files of any sort
 tsconfig.json
 tslint.json
-webpack.config.js
+webpack.config.ts
 wercker.yml
 yarn.lock
 dts-bundle.tmp.voidgl.d.ts
@@ -44,3 +42,11 @@ app.json
 .prettierignore
 .eslintignore
 .aws-local.js
+
+# -----[ Force Keep ] -------------------------------------------
+# Ensure distribution sources are included
+!dist/src
+!dist/lib
+!dist/app
+# Ensure all installation files are included
+!bin/**/*

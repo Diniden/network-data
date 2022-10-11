@@ -6,7 +6,6 @@
     "declaration": true,
     "experimentalDecorators": true,
     "jsx": "react",
-    "jsxFactory": "h",
     "lib": ["es2015", "es2017", "esnext", "dom"],
     "module": "commonjs",
     "moduleResolution": "node",
@@ -14,19 +13,24 @@
     "noImplicitReturns": true,
     "noUnusedLocals": true,
     "paths": {
-      "src": ["./src"],
+      "lib": ["./lib"],
+      "app": ["./app"],
       "test": ["./test"]
     },
     "sourceMap": true,
     "noUnusedParameters": true,
     "removeComments": false,
     "strictNullChecks": true,
-    "target": "es5",
+    "target": "ES5",
     "typeRoots": ["./node_modules/@types"]
   },
   "include": [
-    "src",
-    "test"
+    "app",
+    "lib",
+    "test",
+    "unit-test",
+    "types",
+    "dts"
   ],
   "exclude": [
     "node_modules",

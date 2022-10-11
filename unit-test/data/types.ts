@@ -1,5 +1,5 @@
 export interface ValuedObject {
-  /** A name for the node. May not be unique */
+  /** A name for the meta data. May not be unique */
   name: string;
   /** A date value on the node */
   dateMetric: Date;
@@ -8,16 +8,14 @@ export interface ValuedObject {
   /** A string value on the node */
   strMetric: string;
   /** A guaranteed UID identifier */
-  UID?: string | number;
+  UID: string | number;
 }
 
-export interface TestNode extends ValuedObject {
-
-}
+export interface TestNode extends ValuedObject {}
 
 export interface TestEdge extends ValuedObject {
   /** Guaranteed to point to a Node's UID */
-  UID_A?: string | number;
+  UID_IN: string | number;
   /** Guaranteed to point to a Node's UID */
-  UID_B?: string | number;
+  UID_OUT: string | number;
 }

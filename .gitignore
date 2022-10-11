@@ -4,12 +4,14 @@ node_modules
 build
 # No lock files. They cause confusion. We just don't allow carats in our package
 package-lock.json
+yarn.lock
 # Remove cache
 .cache
 
 # -----[ Metadata ]---------------------------------------------
 # macOS
 .DS_Store
+**/.DS_Store
 # JetBrains (IDE)
 .idea
 # VS Code (IDE)
@@ -20,3 +22,20 @@ npm*log-*
 # -----[ Local Administrative Items ] --------------------------
 .aws-local.js
 dist.tar
+compress-project
+project.tgz
+tsconfig.temp.json
+
+# -----[ Force Keep ] -------------------------------------------
+# Ensure distribution sources are included
+!dist/src
+!dist/app
+!dist/lib
+!dist/docs
+# Ensure all installation files are included
+!init-file-structure/**/*
+!bin/**/*
+
+# -----[ We really don't want to keep this ]--------------------
+.DS_Store
+**/.DS_Store

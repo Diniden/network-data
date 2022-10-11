@@ -1,7 +1,7 @@
-import { exclusiveRandItems } from "./random";
+import { orderedRandItems } from "./random";
 import { TestEdge, TestNode } from "./types";
 import { randPhrase, randWord } from "./word-list";
-const randomSeed = require('random-seed');
+const randomSeed = require("random-seed");
 
 let NODE_UID = 0;
 let EDGE_UID = 0;
@@ -13,7 +13,7 @@ let EDGE_UID = 0;
  * genNodes(5) === genNodes(15) for the first 5 nodes
  */
 export function genNodes(count: number) {
-  const rand = randomSeed.create('nodes');
+  const rand: (max: number) => number = randomSeed.create("nodes");
   const out: TestNode[] = [];
 
   for (let i = 0; i < count; ++i) {
@@ -22,11 +22,30 @@ export function genNodes(count: number) {
       UID: ++NODE_UID,
       dateMetric: new Date(),
       numMetric: rand(1000),
-      strMetric: randWord(rand)
+      strMetric: randWord(rand),
     });
   }
 
   return out;
+}
+
+/**
+ * Generate an edge for two nodes with randomized metrics.
+ */
+export function genEdge(
+  rand: (max: number) => number,
+  in_: TestNode,
+  out_: TestNode
+) {
+  return {
+    name: randPhrase(rand, 3),
+    UID: ++EDGE_UID,
+    UID_IN: in_.UID,
+    UID_OUT: out_.UID,
+    dateMetric: new Date(),
+    numMetric: rand(1000),
+    strMetric: randWord(rand),
+  };
 }
 
 /**
@@ -38,20 +57,13 @@ export function genNodes(count: number) {
  * genEdges(nodes, 5) === genEdges(nodes, 15) for the first 5 edges
  */
 export function genEdges(nodes: TestNode[], count: number) {
-  const rand = randomSeed.create('edges');
+  const rand = randomSeed.create("edges");
   const out: TestEdge[] = [];
 
   for (let i = 0; i < count; ++i) {
-    const pickTwo = exclusiveRandItems(rand, nodes, 2);
-    out.push({
-      name: randPhrase(rand, 3),
-      UID: ++EDGE_UID,
-      UID_A: pickTwo[0].UID,
-      UID_B: pickTwo[1].UID,
-      dateMetric: new Date(),
-      numMetric: rand(1000),
-      strMetric: randWord(rand)
-    });
+    const pickTwo = orderedRandItems(rand, nodes, 2);
+    if (!pickTwo) continue;
+    out.push(genEdge(rand, pickTwo[0], pickTwo[1]));
   }
 
   return out;
