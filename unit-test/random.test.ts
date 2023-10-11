@@ -1,12 +1,12 @@
+import { describe, test } from "@jest/globals";
 import assert from "assert";
-import { describe, it } from "mocha";
 import { orderedRandItems, randomSum } from "./data/random";
 
 const rand = require("random-seed").create("sum-test");
 const list = new Array(100).fill(0).map((_, i) => i);
 
 describe("randomSum", () => {
-  it("Should create an array", () => {
+  test("Should create an array", () => {
     let out = randomSum(rand, 100, 10);
     assert(Array.isArray(out), "Should be an array");
     assert.equal(out.length, 10, "Should be 10 items");
@@ -32,7 +32,7 @@ describe("randomSum", () => {
     assert.equal(out.length, 1000, "Should be 1000 items");
   });
 
-  it("Should sum to 100", () => {
+  test("Should sum to 100", () => {
     let test = randomSum(rand, 100, 10);
     let sum = test.reduce((a, b) => a + b, 0);
     assert(sum === 100, "10 elements shold sum to 100");
@@ -60,7 +60,7 @@ describe("randomSum", () => {
 });
 
 describe("exclusiveRandItems", () => {
-  it("Should return an array", () => {
+  test("Should return an array", () => {
     let test = orderedRandItems(rand, list, 10);
     assert(Array.isArray(test), "Should be an array");
     assert.equal(test.length, 10, "Should be 10 items");
@@ -90,7 +90,7 @@ describe("exclusiveRandItems", () => {
     assert.equal(test.length, 100, "Should be 100 items from 1000 count");
   });
 
-  it("Should return items from the list and be unique", () => {
+  test("Should return items from the list and be unique", () => {
     const check = new Set(list);
     let duplication = new Set();
     let test = orderedRandItems(rand, list, 10);
