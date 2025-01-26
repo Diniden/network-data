@@ -70,6 +70,19 @@ export type GenericFunction<T> = (...args: any[]) => T;
 export type FlowType = Generator<unknown, unknown, unknown> | undefined;
 
 /**
+ * This is used, ironically, to make the Strict Type possible.
+ */
+type StrictTypeImpossible<K extends keyof any> = {
+  [P in K]: never;
+};
+
+/**
+ * Enforces a type to NOT allow extra properties to be present
+ */
+export type StrictType<T, U extends T = T> = U &
+  StrictTypeImpossible<Exclude<keyof U, keyof T>>;
+
+/**
  * Typeguard for strings
  */
 export function isString(val: any): val is string {

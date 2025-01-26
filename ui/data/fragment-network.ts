@@ -269,7 +269,7 @@ export async function fragmentNetwork<TNodeMeta, TEdgeMeta>(
         yield [inIndex, outIndex, edges] as [
           number,
           number,
-          IEdge<TNodeMeta, TEdgeMeta>[]
+          IEdge<TNodeMeta, TEdgeMeta>[],
         ];
       }
     }
@@ -380,8 +380,10 @@ export function validateFragmentResults<TNodeMeta, TEdgeMeta>(
       });
     });
   } catch (err) {
-    console.error("VALIDATE FRAGMENT OPERATION ERROR:");
-    console.error(err.stack || err.message);
+    if (err instanceof Error) {
+      console.error("VALIDATE FRAGMENT OPERATION ERROR:");
+      console.error(err.stack || err.message);
+    }
     return false;
   }
 

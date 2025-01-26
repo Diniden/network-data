@@ -1,3 +1,3 @@
-import { NOOP } from "../no-op.js";
+import { NOOP } from "../../util/no-op";
 
 export default NOOP;

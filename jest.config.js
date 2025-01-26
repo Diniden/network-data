@@ -2,10 +2,13 @@ import path from "path";
 
 /** @type {import('ts-jest').JestConfigWithTsJest} */
 export default {
-  testEnvironment: "jsdom",
+  // testEnvironment: "jsdom",
+  preset: "ts-jest/presets/js-with-ts-esm",
+  testEnvironment: "node",
   testRegex: path.resolve("(unit-test|ui|test|app|utils)/.*.test.ts$"),
   extensionsToTreatAsEsm: [".ts"],
   moduleNameMapper: {
+    "^config/(.*)\\.js$": path.resolve("./app/config/$1.ts"),
     "^(\\.{1,2}/.*)\\.js$": "$1",
   },
   transform: {
@@ -13,9 +16,10 @@ export default {
       "ts-jest",
       {
         useESM: true,
+        isolatedModules: true,
+        tsConfig: path.resolve("tsconfig.json"),
       },
     ],
   },
-  collectCoverageFrom: [path.resolve("(ui|app|utils)/**/*.{ts,tsx}")],
-  coverageReporters: ["clover", "json-summary", "lcov", "text-summary"],
+  testTimeout: 20000,
 };

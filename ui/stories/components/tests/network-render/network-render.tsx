@@ -1,12 +1,9 @@
 import {
-  AutoEasingMethod,
   Bounds,
   CircleInstance,
   copy4,
   EdgeInstance,
   nextFrame,
-  scale2,
-  scale3,
   stopAnimationLoop,
   Vec2,
 } from "deltav";
@@ -21,6 +18,8 @@ import {
 } from "../../../..";
 import { TestEdge, TestNode } from "../../../../../unit-test/data/types";
 import { classnames } from "../../../../../util/classnames";
+import { detectCycles } from "../../../../calculate/detect-cycles";
+import { fragmentNetwork } from "../../../../data/fragment-network";
 import { ILayoutResult } from "../../../../layout";
 import { IForceLayoutResult } from "../../../../layout/force-layout";
 import { gridGameLayout } from "../../../../layout/grid-game-layout";
@@ -306,10 +305,6 @@ export class NetworkRender extends React.Component<INetworkRender, IState> {
       nodeIndex: 0,
     };
 
-    const t = Date.now();
-    const d = await disjointGroups(network);
-    console.log("DISJOINT GROUPS", Date.now() - t, d);
-
     /** Render loop of the graphic object updates */
     const updateGraphics = async (
       results: ILayoutResult<TestNode, TestEdge>,
@@ -388,13 +383,23 @@ export class NetworkRender extends React.Component<INetworkRender, IState> {
       await this.pause;
     };
 
+    console.log("Running GridGameLayout...");
+    const groups = await disjointGroups(network);
+    const networks = await fragmentNetwork(groups.groups, groups.groupSets);
+    const largestNetwork = networks.fragments.sort(
+      (a, b) => b.nodes.length - a.nodes.length
+    )[0];
+
+    detectCycles(largestNetwork);
+
     // Run our layout implementation
-    const results = await gridGameLayout(network, {
+    const results = await gridGameLayout(largestNetwork, {
       centerX: box.width / 2,
       centerY: box.height / 2,
       cellWidth: 5,
       cellHeight: 5,
       steps: -1,
+      tensionThreshold: 2,
 
       // Generate our graphics to render for each element
       onLayoutBegin: initGraphics,

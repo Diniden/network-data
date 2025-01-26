@@ -45,6 +45,22 @@ export interface ISpreadResult<TNodeMeta, TEdgeMeta> {
    */
   collisions?: Set<INode<TNodeMeta, TEdgeMeta>>;
   /**
+   * This contains all of the nodes that are visited at the exact same time from
+   * the same entry node wave front. These represent a condensing of node paths.
+   *
+   * This stores the merges as a node with a list of nodes that are all parents
+   * on the path to the merged node.
+   */
+  merges?: Map<INode<TNodeMeta, TEdgeMeta>, INode<TNodeMeta, TEdgeMeta>[]>;
+  /**
+   * This contains all of the edges that connect nodes in the same wave front.
+   * These represent connections that indicate siblings at the same depth in the
+   * spread.
+   *
+   * This will be excluded if the excludeSameDepthEdges option is set to true.
+   */
+  joins?: IEdge<TNodeMeta, TEdgeMeta>[];
+  /**
    * If the spread options set the keepPath flag, then this is populated with a
    * node's previously found item during the spread. If you keep recursively
    * searching for a parent, you will eventually get to the originating node.
@@ -139,9 +155,15 @@ interface ISpreadStateInternal<TNodeMeta, TEdgeMeta>
 export interface ISpreadOptions<TNodeMeta, TEdgeMeta> {
   /**
    * Set this to remove edges that connect two nodes that have the same depth
-   * level from the source
+   * level from a source
    */
   excludeSameDepthEdges?: boolean;
+  /**
+   * This will exclude processing to find nodes that are visited at the same
+   * time from a source node. This is specific to the "merges" property in the
+   * spread result information.
+   */
+  excludeMergeNodes?: boolean;
   /**
    * If this is set to true, then an additional result will be created that will
    * provide a path that returns to the originating node.
@@ -303,6 +325,7 @@ export async function spread<TNodeMeta, TEdgeMeta>(
     startNodes,
     results: sendResults,
     excludeSameDepthEdges,
+    excludeMergeNodes,
     keepPath,
     keepPreviousPath,
     maxDepth = Number.MAX_SAFE_INTEGER,
@@ -360,6 +383,7 @@ export async function spread<TNodeMeta, TEdgeMeta>(
       depth: 0,
       nodes: toProcess,
       edges: new Set(),
+      merges: new Map(),
       path: savePath ? new Map() : void 0,
       util: { getRoot, getParent },
     };
@@ -404,6 +428,8 @@ export async function spread<TNodeMeta, TEdgeMeta>(
       // Run the spread operation until the operation is complete.
       while (run) {
         const collisions = new Set<INode<TNodeMeta, TEdgeMeta>>();
+        const merges: ISpreadResult<TNodeMeta, TEdgeMeta>["merges"] = new Map();
+        const joins: ISpreadResult<TNodeMeta, TEdgeMeta>["joins"] = [];
 
         // Handle all nodes waiting to be processed
         while (toProcess.length > 0) {
@@ -423,7 +449,52 @@ export async function spread<TNodeMeta, TEdgeMeta>(
             node,
             exclude: state.processedNodes,
             includeEdgeToExcludedNode: !excludeSameDepthEdges,
+            includeExcludedList: !excludeMergeNodes,
           });
+
+          // If we include same depth edges, we need to provide the join list to
+          // express which of those edges are joins.
+          if (!excludeSameDepthEdges && siblings.excludedEdges) {
+            for (
+              let i = 0, iMax = siblings.excludedEdges.length;
+              i < iMax;
+              ++i
+            ) {
+              const excluded = siblings.excludedEdges[i];
+
+              // If the excluded edge is in the current wave front, then it
+              // represents a join between two nodes in this wave front.
+              if (
+                state.willProcessNodes.has(excluded.out) &&
+                state.willProcessNodes.has(excluded.in)
+              ) {
+                joins.push(excluded);
+              }
+            }
+          }
+
+          // If we include merges in our processing, we examine the siblings for
+          // results that were excluded based on the exclusion list we provided
+          // it. If those excluded are found within the nodes added to the
+          // current wave, then we have multiple nodes from the previous wave
+          // visiting the same node this wave. This is a merge.
+          if (!excludeMergeNodes && siblings.excludedNodes) {
+            for (
+              let i = 0, iMax = siblings.excludedNodes.length;
+              i < iMax;
+              ++i
+            ) {
+              const excluded = siblings.excludedNodes[i];
+
+              // If the excluded node is in the current wave front, then it
+              // represents a merger of multiple nodes in this wave front
+              // visiting the same node.
+              if (state.willProcessNodes.has(excluded)) {
+                merges.get(excluded)?.push(node) ??
+                  merges.set(excluded, [node]);
+              }
+            }
+          }
 
           // Add those neighbors into our next processing queue
           for (let i = 0, iMax = siblings.nodes.length; i < iMax; ++i) {
@@ -470,6 +541,8 @@ export async function spread<TNodeMeta, TEdgeMeta>(
           depth: state.depth,
           nodes: Array.from(state.willProcessNodes.values()),
           edges,
+          merges: excludeMergeNodes ? void 0 : merges,
+          joins: excludeSameDepthEdges ? void 0 : joins,
           path: savePath ? path : void 0,
           collisions: collisions.size > 0 ? collisions : void 0,
           util: { getRoot, getParent },
@@ -526,7 +599,12 @@ export async function spread<TNodeMeta, TEdgeMeta>(
       }
     } catch (err) {
       willStop();
-      rejectSpread(err);
+
+      if (err instanceof Error) {
+        rejectSpread(err);
+      } else {
+        rejectSpread(new Error("Unknown error"));
+      }
     }
   };
 

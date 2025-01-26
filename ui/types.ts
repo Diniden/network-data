@@ -40,7 +40,7 @@ export type Identifier = number | string;
  * Typeguard to ensure a value is an identifier
  */
 export function isIdentifier(val: any): val is Identifier {
-  return val && (val.toFixed || val.substring);
+  return val !== void 0 && val !== null && (val.toFixed || val.substring);
 }
 
 /**

@@ -3,6 +3,7 @@ import { MakeNetworkProps } from "../../data/make-network-props";
 import { NetworkRender } from "./network-render/network-render";
 import { RenderEnron } from "./render-enron";
 import { StoryFn } from "@storybook/react";
+import { RenderImage } from "./render-image";
 
 export default {
   title: "Tests/Make Network",
@@ -43,3 +44,9 @@ const EnronTemplate = (_children?: any) => (args: any) => (
 );
 
 export const Enron: StoryFn = EnronTemplate().bind({});
+
+const ImageTemplate = (_children?: any) => (args: any) => (
+  <RenderImage {...args} />
+);
+
+export const Logo: StoryFn = ImageTemplate().bind({});

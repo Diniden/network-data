@@ -68,6 +68,10 @@ bitbucket-pipelines.yml
 !dist/app
 !dist/app/client
 !dist/app/server
+!dist/types
+!dist/types/ui
+!dist/types/util
+!dist/types/**/*
 # ui is excluded, but we want all components transferred over when installed
 !ui/components
 !ui/test

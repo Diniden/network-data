@@ -1,5 +1,5 @@
-import { NOOP } from "./no-op";
-import { wait } from "./wait";
+import { NOOP } from "./no-op.js";
+import { wait } from "./wait.js";
 
 /**
  * A dubious method to help with dubious times. Used to call for updates during

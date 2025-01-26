@@ -259,8 +259,8 @@ async function simulate<TData>(
     .force(
       "charge",
       d3Force
-        .forceManyBody()
-        .strength((n: IForce<TData>) => -n.r * spreadBias * 2)
+        .forceManyBody<IForce<TData>>()
+        .strength((n) => -n.r * spreadBias * 2)
     )
     .force("center", d3Force.forceCenter(centerX, centerY))
 
@@ -275,8 +275,8 @@ async function simulate<TData>(
     .force(
       "collide",
       d3Force
-        .forceCollide()
-        .radius(function (n: IForce<TData>) {
+        .forceCollide<IForce<TData>>()
+        .radius(function getR(n: IForce<TData>) {
           return n.r + nodePadding;
         })
         .iterations(5)
@@ -716,7 +716,7 @@ async function fragmentNetworkStrategy<TNodeMeta, TEdgeMeta>(
     );
 
     const networks: INetworkData<TNodeMeta, TEdgeMeta>[] = [];
-    const parentNetwork: typeof disjointNetworks["fragmentsNetwork"] = {
+    const parentNetwork: (typeof disjointNetworks)["fragmentsNetwork"] = {
       nodes: [],
       edges: [],
       edgeMap: new Map(),

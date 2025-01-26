@@ -50,7 +50,7 @@ export interface IMakeNetworkOptions<
   TNodeSource,
   TEdgeSource,
   TNodeMeta,
-  TEdgeMeta
+  TEdgeMeta,
 > {
   /**
    * Some datasets spread out the total configuration of a node or edge across
@@ -194,7 +194,7 @@ export interface IMakeNetworkResult<
   TNodeSource,
   TEdgeSource,
   TNodeMeta,
-  TEdgeMeta
+  TEdgeMeta,
 > extends INetworkData<TNodeMeta, TEdgeMeta> {
   /** All errors discovered while processing the data from old to new format */
   errors:
@@ -296,7 +296,7 @@ export async function makeNetwork<
   TNodeSource,
   TEdgeSource,
   TNodeMeta,
-  TEdgeMeta
+  TEdgeMeta,
 >(
   options: IMakeNetworkOptions<TNodeSource, TEdgeSource, TNodeMeta, TEdgeMeta>
 ): Promise<IMakeNetworkResult<TNodeSource, TEdgeSource, TNodeMeta, TEdgeMeta>> {
@@ -355,7 +355,7 @@ export async function makeNetwork<
   // First map our data to node objects
   for await (const data of values(nodeData)) {
     // Get the identifier of the node for this particular row of data
-    let ids = access(data, nodeId, isIdentifier) || nodeUID++;
+    let ids = access(data, nodeId, isIdentifier) ?? nodeUID++;
     if (!Array.isArray(ids)) ids = [ids];
 
     // For all ids found for this given row: we process the row repeatedly per
@@ -442,8 +442,8 @@ export async function makeNetwork<
     for (let k = 0, kMax = ids.length; k < kMax; ++k) {
       const id = ids[k];
       // Find any nodes associated with this edge
-      const inId = access(data, edgeIn, isIdentifier) || "";
-      const outId = access(data, edgeOut, isIdentifier) || "";
+      const inId = access(data, edgeIn, isIdentifier) ?? "";
+      const outId = access(data, edgeOut, isIdentifier) ?? "";
       const nodeIn = nodeMap.get(inId);
       const nodeOut = nodeMap.get(outId);
 

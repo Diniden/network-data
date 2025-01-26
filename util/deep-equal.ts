@@ -3,7 +3,7 @@
  */
 export function deepEqual<
   T extends Record<keyof T, any>,
-  U extends Record<keyof U, any>
+  U extends Record<keyof U, any>,
 >(a: T, b: U, checked?: Set<any>): boolean {
   if ((a as unknown) === b) return true;
 

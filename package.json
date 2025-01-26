@@ -10,8 +10,8 @@
     "url": "git+ssh://git@github.com/Diniden/network-data.git"
   },
   "version": "1.0.0",
-  "main": "dist/index.js",
-  "types": "dist/lib/index.d.ts",
+  "main": "./dist/ui/index.js",
+  "types": "./dist/types/ui/index.d.ts",
   "license": "MIT",
   "scripts": {
     "clean": "devops clean",
@@ -25,7 +25,12 @@
     "component": "devops component",
     "init": "devops init",
     "test": "devops test",
-    "url": "devops url"
+    "url": "devops url",
+    "page": "devops page",
+    "template": "devops template",
+    "env": "devops env",
+    "font": "devops font",
+    "package": "devops package"
   },
   "devDependencies": {
     "@types/d3-force": "3.0.3",
@@ -36,7 +41,7 @@
     "d3-hierarchy": "3.1.2",
     "d3-scale": "4.0.2",
     "deltav": "3.0.0",
-    "devops": "github:vega-studio/node-devops#semver:2.14.0",
+    "devops": "github:vega-studio/node-devops#semver:5.2.20",
     "random-seed": "0.3.0",
     "simple-data-provider": "1.1.6"
   },
@@ -77,7 +82,8 @@
       "repoUrl": "https://github.com/Diniden/network-data",
       "repoType": "git",
       "masterBranch": "master",
-      "figmaUrl": "N/A"
+      "figmaUrl": "N/A",
+      "repoSSH": "git+ssh://git@github.com/Diniden/network-data.git"
     }
   }
 }

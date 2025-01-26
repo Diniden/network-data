@@ -76,6 +76,12 @@ export interface IGridGameOptions<TNodeMeta, TEdgeMeta>
    * the simulation run forever.
    */
   steps?: number;
+  /**
+   * WHen tension in the chart exceeds this value it will spread apart to help
+   * the nodes self resolve. Set to greater than 1 to prevent and tension
+   * correction.
+   */
+  tensionThreshold?: number;
 
   /**
    * Callback that allows the caller to abruptly quit the simulation. Simply
@@ -149,6 +155,10 @@ interface Gameboard<TNodeMeta, TEdgeMeta> {
 interface GamePieces<TNodeMeta, TEdgeMeta> {
   nodes: IGamePiece<TNodeMeta, TEdgeMeta>[];
   edges: IResolvedLink<TNodeMeta, TEdgeMeta>[];
+  nodeNeighbors: Map<
+    IGamePiece<TNodeMeta, TEdgeMeta>,
+    Set<IGamePiece<TNodeMeta, TEdgeMeta>>
+  >;
 }
 
 /**
@@ -169,6 +179,9 @@ function generatePieces<TNodeMeta, TEdgeMeta>(
     network.nodes.slice(0),
     SortNodesMode.MOST_EDGES_TOTAL_FIRST
   );
+
+  const nodeNeighbors: GamePieces<TNodeMeta, TEdgeMeta>["nodeNeighbors"] =
+    new Map();
 
   // Create game pieces for each node
   nodes.forEach((n) => {
@@ -203,12 +216,32 @@ function generatePieces<TNodeMeta, TEdgeMeta>(
         source,
         target,
       });
+
+      // Set up neighbor relationships
+      let neighbors = nodeNeighbors.get(source);
+
+      if (!neighbors) {
+        neighbors = new Set();
+        nodeNeighbors.set(source, neighbors);
+      }
+
+      neighbors.add(target);
+
+      neighbors = nodeNeighbors.get(target);
+
+      if (!neighbors) {
+        neighbors = new Set();
+        nodeNeighbors.set(target, neighbors);
+      }
+
+      neighbors.add(source);
     }
   }
 
   return {
     nodes: placements,
     edges,
+    nodeNeighbors,
   };
 }
 
@@ -881,6 +914,8 @@ export async function gridGameLayout<TNodeMeta, TEdgeMeta>(
     gather: 0,
   };
 
+  const tensionThreshold = options.tensionThreshold || 0.8;
+
   while (steps === -1 || steps-- > 0) {
     const gathering = board.gather;
 
@@ -891,7 +926,7 @@ export async function gridGameLayout<TNodeMeta, TEdgeMeta>(
     // Play the game to resolve
     await playGame(board, pieces, options);
 
-    if (board.tension / pieces.nodes.length > 0.8 && !gathering) {
+    if (board.tension / pieces.nodes.length > tensionThreshold && !gathering) {
       console.log("TENSION", board.tension / pieces.nodes.length);
       await spreadPieces(board, pieces, options, 8);
       await driftPieces(board, pieces);
