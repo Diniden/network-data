@@ -2,8 +2,12 @@
 node_modules
 # The actual build files
 build
+dist
+storybook-static
 # No lock files. They cause confusion. We just don't allow carats in our package
 package-lock.json
+bun.lock
+bun.lockb
 # Remove cache
 .cache
 

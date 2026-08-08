@@ -1,8 +1,7 @@
 # -----[ Application ]---------------------------------------------
 node_modules
-# The actual build files
-build
 .cache
+storybook-static
 
 # -----[ Metadata ]------------------------------------------------
 # macOS
@@ -15,32 +14,16 @@ npm*log-*
 *.log
 
 # -----[ Distribution ] -------------------------------------------
-# scripts
-scripts
-# Remove any development Code
+# Remove any development source/config, keep only the built dist output
 src
 docs
-loaders
-# Ensure distribution sources are included
-!dist/src
-!dist/docs
-# Remove any tests
 test
 unit-test
-# Clear out any uneeded config files of any sort
+.storybook
 tsconfig.json
-tslint.json
-webpack.config.js
-wercker.yml
-yarn.lock
-dts-bundle.tmp.voidgl.d.ts
+bunfig.toml
 .editorconfig
-.eslintrc.js
 .nvmrc
 package-lock.json
-Procfile
-prettier-loader.js
-app.json
-.prettierignore
-.eslintignore
-.aws-local.js
+bun.lock
+bun.lockb

@@ -14,19 +14,20 @@
     "noImplicitReturns": true,
     "noUnusedLocals": true,
     "paths": {
-      "src": ["./src"],
-      "test": ["./test"]
+      "src": ["./src"]
     },
     "sourceMap": true,
     "noUnusedParameters": true,
     "removeComments": false,
     "strictNullChecks": true,
     "target": "es5",
+    "types": [],
     "typeRoots": ["./node_modules/@types"]
   },
   "include": [
     "src",
-    "test"
+    "stories",
+    ".storybook"
   ],
   "exclude": [
     "node_modules",

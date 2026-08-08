@@ -570,7 +570,7 @@ export const WORDS = [
   'nothing',
   'notice',
   'now',
-  'n't',
+  "n't",
   'number',
   'occur',
   'of',
